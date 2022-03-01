@@ -6,6 +6,8 @@
  */
 package com.example.farkleproject;
 
+import static android.graphics.Color.rgb;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -27,15 +29,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         imageButtons[0][0] = (ImageButton)this.findViewById(R.id.imageButton1);
+        imageButtons[0][0].setOnClickListener(this);
         imageButtons[0][1] = (ImageButton)this.findViewById(R.id.imageButton2);
+        imageButtons[0][1].setOnClickListener(this);
         imageButtons[0][2] = (ImageButton)this.findViewById(R.id.imageButton3);
+        imageButtons[0][2].setOnClickListener(this);
         imageButtons[1][0] = (ImageButton)this.findViewById(R.id.imageButton4);
+        imageButtons[1][0].setOnClickListener(this);
         imageButtons[1][1] = (ImageButton)this.findViewById(R.id.imageButton5);
-        imageButtons[1][2] = (ImageButton)this.findViewById(R.id.imageButton5);
+        imageButtons[1][1].setOnClickListener(this);
+        imageButtons[1][2] = (ImageButton)this.findViewById(R.id.imageButton6);
+        imageButtons[1][2].setOnClickListener(this);
 
         for(int x = 0; x < 3; x++){
             for(int y = 0; y < 2; y++){
-                imageButtons[y][x].setEnabled(false);
+                //set border color to nothing
+                imageButtons[y][x].setEnabled(true);
             }
         }
 
@@ -48,14 +57,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClick(View view){ //when a button is clicked
-        Button b = (Button)view;
-        if(b.isEnabled()){
-            if(b.getText().equals("Roll")){ //when the roll button is clicked
-              rollDice();
-            }else if(b.getText().equals("Score")){ //when the score button is clicked
-                System.out.println("it worked score");
-            }else if(b.getText().equals("Stop")){ //when the stop button is clicked
-                System.out.println("it worked stop");
+        int imgBtn_id = view.getId();
+        if(imgBtn_id == 1000353 ||
+                imgBtn_id == 1000352 ||
+                imgBtn_id == 1000351 ||
+                imgBtn_id == 1000350 ||
+                imgBtn_id == 1000345 ||
+                imgBtn_id == 1000343) { // id's of dice image 1, 2, 3, 4, 5, 6
+            ImageButton imgBtn = (ImageButton) view;
+            for (int x = 0; x < 3; x++) {
+                for (int y = 0; y < 2; y++) {
+                    //set border color to nothing
+                  //  imageButtons[y][x].setColorFilter(rgb(253, 255, 232));
+                    System.out.println("dice was clicked");
+                }
+            }
+        }else { //if one of the bottom command buttons are pressed
+            Button b = (Button) view;
+            if (b.isEnabled()) {
+                if (b.getText().equals("Roll")) { //when the roll button is clicked
+                    rollDice();
+                } else if (b.getText().equals("Score")) { //when the score button is clicked
+                    System.out.println("it worked score");
+                } else if (b.getText().equals("Stop")) { //when the stop button is clicked
+                    System.out.println("it worked stop");
+                }
             }
         }
     }
