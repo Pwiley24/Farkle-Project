@@ -6,10 +6,12 @@
  */
 package com.example.farkleproject;
 
+import static android.graphics.Color.argb;
 import static android.graphics.Color.rgb;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -58,20 +60,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View view){ //when a button is clicked
         int imgBtn_id = view.getId();
-        if(imgBtn_id == 1000353 ||
-                imgBtn_id == 1000352 ||
-                imgBtn_id == 1000351 ||
-                imgBtn_id == 1000350 ||
-                imgBtn_id == 1000345 ||
-                imgBtn_id == 1000343) { // id's of dice image 1, 2, 3, 4, 5, 6
+        int clickedTimes = 0;//keeps track of how many times a dice is clicked to track for scoring
+
+
+
+
+        //use this area to determine the scoring totals
+        if(imgBtn_id == 2131230934 ||
+                imgBtn_id == 2131230935 ||
+                imgBtn_id == 2131230936 ||
+                imgBtn_id == 2131231199 ||
+                imgBtn_id == 2131231200 ||
+                imgBtn_id == 2131231201) { // id's of dice image 1, 2, 3, 4, 5, 6
+
             ImageButton imgBtn = (ImageButton) view;
-            for (int x = 0; x < 3; x++) {
-                for (int y = 0; y < 2; y++) {
-                    //set border color to nothing
-                  //  imageButtons[y][x].setColorFilter(rgb(253, 255, 232));
-                    System.out.println("dice was clicked");
+            if(clickedTimes % 2 == 1){ //if odd or if user wants to add to score
+                if (imgBtn.getDrawable().equals(R.drawable.dice1)){//if its drawable is dice 1
+
+                }else if (imgBtn.getDrawable().equals(R.drawable.dice2)){ //if drawable is dice 2
+
+                }else if (imgBtn.getDrawable().equals(R.drawable.dice3)){ //if drawable is dice 3
+
+                }else if (imgBtn.getDrawable().equals(R.drawable.dice4)){ //if drawable is dice 4
+
+                }else if (imgBtn.getDrawable().equals(R.drawable.dice5)){ //if drawable is dice 5
+
+                }else if (imgBtn.getDrawable().equals(R.drawable.dice6)){ //if drawable is dice 6
+
                 }
+
+
             }
+
+            /*
+             * I used code from Stack Overflow
+             * URL: https://stackoverflow.com/questions/20121938/how-to-set-tint-for-an-image-view-programmatically-in-android
+             * I used this code to make the background of my dice semi-transparent when clicked on.
+             */
+            imgBtn.setColorFilter(argb(150, 255, 255, 255));
+
+            if (imgBtn.getDrawable().equals(R.drawable.dice1)){//if its drawable is dice 1
+
+            }else if (imgBtn.getDrawable().equals(R.drawable.dice2)){ //if drawable is dice 2
+
+            }else if (imgBtn.getDrawable().equals(R.drawable.dice3)){ //if drawable is dice 3
+
+            }else if (imgBtn.getDrawable().equals(R.drawable.dice4)){ //if drawable is dice 4
+
+            }else if (imgBtn.getDrawable().equals(R.drawable.dice5)){ //if drawable is dice 5
+
+            }else if (imgBtn.getDrawable().equals(R.drawable.dice6)){ //if drawable is dice 6
+
+            }
+            clickedTimes++;
+
         }else { //if one of the bottom command buttons are pressed
             Button b = (Button) view;
             if (b.isEnabled()) {
