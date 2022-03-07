@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
+
     public void onClick(View view){ //when a button is clicked
         newScore = 0;
         int imgBtn_id = view.getId();
