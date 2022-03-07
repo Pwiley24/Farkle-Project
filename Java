@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -25,21 +26,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button roll;
     Button score;
     Button stop;
-    String previousScoreDisplay;
-    String newScoreDisplay;
     int newScore;
-    //score points:
-    int TRIPLEONE = 1000;
-    int TRIPLETWO = 200;
-    int TRIPLETHREE = 300;
-    int TRIPLEFOUR = 400;
-    int TRIPLEFIVE = 500;
-    int TRIPLESIX = 600;
+    int totalScore;
+    int roundNum = 1;
+    int ones = 0;
+    int twos = 0;
+    int threes = 0;
+    int fours = 0;
+    int fives = 0;
+    int sixes = 0;
+    TextView newScoreText;
+    TextView totalScoreText;
+    TextView roundText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //set the text views to manipulate later
+        newScoreText = (TextView)this.findViewById(R.id.currentScore);
+        totalScoreText = (TextView)this.findViewById(R.id.totalScore);
+        roundText = (TextView)this.findViewById(R.id.roundNum);
 
         imageButtons[0][0] = (ImageButton)this.findViewById(R.id.imageButton1);
         imageButtons[0][0].setOnClickListener(this);
@@ -76,10 +85,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void onClick(View view){ //when a button is clicked
+        newScore = 0;
         int imgBtn_id = view.getId();
 
 
-        boolean isColored = false;
 
         //use this area to determine the scoring totals
         if(imgBtn_id == 2131230934 ||
@@ -88,10 +97,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 imgBtn_id == 2131231199 ||
                 imgBtn_id == 2131231200 ||
                 imgBtn_id == 2131231201) { // id's of dice image 1, 2, 3, 4, 5, 6
-
-
-
-
 
             ImageButton imgBtn = (ImageButton) view;
 
@@ -103,18 +108,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
              */
             imgBtn.setColorFilter(argb(150, 255, 255, 255));
             imgBtn.setEnabled(false);
-                
-
-
           
                 
             //track number of dice chosen
-            int ones = 0;
-            int twos = 0;
-            int threes = 0;
-            int fours = 0;
-            int fives = 0;
-            int sixes = 0;
             if (imgBtn.getDrawable().equals(R.drawable.dice1)){//if its drawable is dice 1
                 ones++;
             }else if (imgBtn.getDrawable().equals(R.drawable.dice2)){ //if drawable is dice 2
@@ -124,28 +120,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }else if (imgBtn.getDrawable().equals(R.drawable.dice4)){ //if drawable is dice 4
                 fours++;
             }else if (imgBtn.getDrawable().equals(R.drawable.dice5)){ //if drawable is dice 5
+                System.out.println("IT worked");
                 fives++;
             }else if (imgBtn.getDrawable().equals(R.drawable.dice6)){ //if drawable is dice 6
                 sixes++;
             }
-            scorePoints(ones, twos, threes, fours, fives, sixes);
+            System.out.println("five count before " + fives);
 
 
         }else { //if one of the bottom command buttons are pressed
             Button b = (Button) view;
             if (b.isEnabled()) {
                 if (b.getText().equals("Roll")) { //when the roll button is clicked
+                    ones = 0;
+                    twos = 0;
+                    threes = 0;
+                    fours = 0;
+                    fives = 0;
+                    sixes = 0;
                     rollDice();
                 } else if (b.getText().equals("Score")) { //when the score button is clicked
-                    System.out.println("it worked score");
+                    //print total score to app
+                    scorePoints(ones, twos, threes, fours, fives, sixes);
+                    newScoreText.setText("Current Score: " + newScore);
                 } else if (b.getText().equals("Stop")) { //when the stop button is clicked
-                    System.out.println("it worked stop");
+                    //print out your latest score
+                    totalScoreText.setText("Total Score: " + totalScore);
+                    roundNum++;
+                    roundText.setText("Round " + roundNum);
                 }
             }
         }
     }
 
-    
+    //determine your new score based on your selected dice.
     public void scorePoints(int count1, int count2, int count3, int count4, int count5, int count6){
         //number of 1's
         if(count1 == 1){
@@ -154,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             newScore += 200;
         }else if(count1 == 3){
             newScore += 1000;
-        }else if(count1 <= 4){
+        }else if(count1 >= 4){
             newScore += 1000 + 1000 * (count1 - 3);
         }
 
@@ -165,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             newScore += 0;
         }else if(count2 == 3){
             newScore += 200;
-        }else if(count2 <= 4){
+        }else if(count2 >= 4){
             newScore += 200 + 200 * (count2 - 3);
         }
 
@@ -176,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             newScore += 0;
         }else if(count3 == 3){
             newScore += 300;
-        }else if(count3 <= 4){
+        }else if(count3 >= 4){
             newScore += 300 + 300 * (count3 - 3);
         }
 
@@ -187,66 +195,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             newScore += 0;
         }else if(count4 == 3){
             newScore += 400;
-        }else if(count4 <= 4){
-
+        }else if(count4 >= 4){
+            newScore += 400 + 400 * (count4 - 3);
         }
 
         //number of 5's
         if(count5 == 1){
-
+            newScore += 50;
         }else if(count5 == 2){
-
+            newScore += 100;
         }else if(count5 == 3){
-
-        }else if(count5 <= 4){
-
+            newScore += 500;
+        }else if(count5 >= 4){
+            newScore += 500 + 500 * (count5 - 3);
         }
+        System.out.println("5 count " + count5);
+        System.out.println("five score: " + newScore);
 
         //number of 6's
         if(count6 == 1){
-
+            newScore += 0;
         }else if(count6 == 2){
-
+            newScore += 0;
         }else if(count6 == 3){
-
-        }else if(count6 <= 4){
-
+            newScore += 600;
+        }else if(count6 >= 4){
+            newScore += 600 + 600 * (count6 - 3);
         }
-        
-        
+        totalScore += newScore;
     }
     
     public void rollDice (){
         int diceNum;
         for(int x = 0; x < 3; x++) {
             for (int y = 0; y < 2; y++) {
-                for (int i = 0; i < 6; i++) {
-                    diceNum = (int) (Math.random() * 6) + 1;
-                    if (diceNum == 1) {
-                        /*
-                         * I used stack overflow to write this line of code
-                         * URL: https://stackoverflow.com/questions/19535571/how-to-change-imageview-source-in-android
-                         * I used this code to change the image of my dice buttons.
-                         */
-                        imageButtons[y][x].setImageResource(R.drawable.dice1);
-                    } else if (diceNum == 2) {
-                        imageButtons[y][x].setImageResource(R.drawable.dice2);
-                    } else if (diceNum == 3) {
-                        imageButtons[y][x].setImageResource(R.drawable.dice3);
-                    } else if (diceNum == 4) {
-                        imageButtons[y][x].setImageResource(R.drawable.dice4);
-                    } else if (diceNum == 5) {
-                        imageButtons[y][x].setImageResource(R.drawable.dice5);
-                    } else if (diceNum == 6) {
-                        imageButtons[y][x].setImageResource(R.drawable.dice6);
+                if(imageButtons[y][x].isEnabled()) {
+                    for (int i = 0; i < 6; i++) {
+                        diceNum = (int) (Math.random() * 6) + 1;
+                        if (diceNum == 1) {
+                            /*
+                             * I used stack overflow to write this line of code
+                             * URL: https://stackoverflow.com/questions/19535571/how-to-change-imageview-source-in-android
+                             * I used this code to change the image of my dice buttons.
+                             */
+                            imageButtons[y][x].setImageResource(R.drawable.dice1);
+                        } else if (diceNum == 2) {
+                            imageButtons[y][x].setImageResource(R.drawable.dice2);
+                        } else if (diceNum == 3) {
+                            imageButtons[y][x].setImageResource(R.drawable.dice3);
+                        } else if (diceNum == 4) {
+                            imageButtons[y][x].setImageResource(R.drawable.dice4);
+                        } else if (diceNum == 5) {
+                            imageButtons[y][x].setImageResource(R.drawable.dice5);
+                        } else if (diceNum == 6) {
+                            imageButtons[y][x].setImageResource(R.drawable.dice6);
+                        }
                     }
                 }
             }
         }
     }
-
-
-}
 
 
 }
