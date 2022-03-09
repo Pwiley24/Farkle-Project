@@ -19,23 +19,19 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     ImageButton[][] imageButtons = new ImageButton[2][3]; //[row][col]
+    int[][] diceNumber = new int[2][3];
     Button roll;
     Button score;
     Button stop;
-    int newScore;
-    int totalScore;
+    int currentScore;
+    int totalScore = 0;
     int roundNum = 1;
-    int ones = 0;
-    int twos = 0;
-    int threes = 0;
-    int fours = 0;
-    int fives = 0;
-    int sixes = 0;
-    TextView newScoreText;
+    TextView currentScoreText;
     TextView totalScoreText;
     TextView roundText;
 
@@ -46,31 +42,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         //set the text views to manipulate later
-        newScoreText = (TextView)this.findViewById(R.id.currentScore);
+        currentScoreText = (TextView)this.findViewById(R.id.currentScore);
         totalScoreText = (TextView)this.findViewById(R.id.totalScore);
         roundText = (TextView)this.findViewById(R.id.roundNum);
 
         imageButtons[0][0] = (ImageButton)this.findViewById(R.id.imageButton1);
         imageButtons[0][0].setOnClickListener(this);
+        diceNumber[0][0] = 1;
         imageButtons[0][1] = (ImageButton)this.findViewById(R.id.imageButton2);
         imageButtons[0][1].setOnClickListener(this);
+        diceNumber[0][1] = 2;
         imageButtons[0][2] = (ImageButton)this.findViewById(R.id.imageButton3);
         imageButtons[0][2].setOnClickListener(this);
+        diceNumber[0][2] = 3;
         imageButtons[1][0] = (ImageButton)this.findViewById(R.id.imageButton4);
         imageButtons[1][0].setOnClickListener(this);
+        diceNumber[1][0] = 4;
         imageButtons[1][1] = (ImageButton)this.findViewById(R.id.imageButton5);
         imageButtons[1][1].setOnClickListener(this);
+        diceNumber[1][1] = 5;
         imageButtons[1][2] = (ImageButton)this.findViewById(R.id.imageButton6);
         imageButtons[1][2].setOnClickListener(this);
+        diceNumber[1][2] = 6;
 
 
 
-        for(int x = 0; x < 3; x++){
-            for(int y = 0; y < 2; y++){
-                //set border color to nothing
-                imageButtons[y][x].setEnabled(true);
-            }
-        }
+
 
         roll = (Button)this.findViewById(R.id.roll_button);
         roll.setOnClickListener(this);
@@ -84,12 +81,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-
     public void onClick(View view){ //when a button is clicked
-        newScore = 0;
         int imgBtn_id = view.getId();
-
-
 
         //use this area to determine the scoring totals
         if(imgBtn_id == 2131230934 ||
@@ -109,123 +102,199 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
              */
             imgBtn.setColorFilter(argb(150, 255, 255, 255));
             imgBtn.setEnabled(false);
-          
-                
-            //track number of dice chosen
-            if (imgBtn.getDrawable().equals(R.drawable.dice1)){//if its drawable is dice 1
-                ones++;
-            }else if (imgBtn.getDrawable().equals(R.drawable.dice2)){ //if drawable is dice 2
-                twos++;
-            }else if (imgBtn.getDrawable().equals(R.drawable.dice3)){ //if drawable is dice 3
-                threes++;
-            }else if (imgBtn.getDrawable().equals(R.drawable.dice4)){ //if drawable is dice 4
-                fours++;
-            }else if (imgBtn.getDrawable().equals(R.drawable.dice5)){ //if drawable is dice 5
-                System.out.println("IT worked");
-                fives++;
-            }else if (imgBtn.getDrawable().equals(R.drawable.dice6)){ //if drawable is dice 6
-                sixes++;
-            }
-            System.out.println("five count before " + fives);
 
 
         }else { //if one of the bottom command buttons are pressed
             Button b = (Button) view;
             if (b.isEnabled()) {
                 if (b.getText().equals("Roll")) { //when the roll button is clicked
-                    ones = 0;
-                    twos = 0;
-                    threes = 0;
-                    fours = 0;
-                    fives = 0;
-                    sixes = 0;
                     rollDice();
+                    checkPlay();
                 } else if (b.getText().equals("Score")) { //when the score button is clicked
                     //print total score to app
-                    scorePoints(ones, twos, threes, fours, fives, sixes);
-                    newScoreText.setText("Current Score: " + newScore);
+                    scorePoints();
+                    currentScoreText.setText("Current Score: " + currentScore);
                 } else if (b.getText().equals("Stop")) { //when the stop button is clicked
                     //print out your latest score
                     totalScoreText.setText("Total Score: " + totalScore);
                     roundNum++;
                     roundText.setText("Round " + roundNum);
+                    resetDice();
                 }
             }
         }
     }
 
+    public void resetDice(){
+        //enable all dice:
+        for(int x = 0; x < 3; x++){
+            for(int y = 0; y < 2; y++){
+                //set color to nothing
+                imageButtons[y][x].setEnabled(true);
+            }
+        }
+        currentScore = 0;
+        currentScoreText.setText("Current Score: " + currentScore);
+
+        //reset the dice images:
+        imageButtons[0][0].setImageResource(R.drawable.dice1);
+        diceNumber[0][0] = 1;
+        imageButtons[0][1].setImageResource(R.drawable.dice2);
+        diceNumber[0][1] = 2;
+        imageButtons[0][2].setImageResource(R.drawable.dice3);
+        diceNumber[0][2] = 3;
+        imageButtons[1][0].setImageResource(R.drawable.dice4);
+        diceNumber[1][0] = 4;
+        imageButtons[1][1].setImageResource(R.drawable.dice5);
+        diceNumber[1][1] = 5;
+        imageButtons[1][2].setImageResource(R.drawable.dice6);
+        diceNumber[1][2] = 6;
+    }
+
     //determine your new score based on your selected dice.
-    public void scorePoints(int count1, int count2, int count3, int count4, int count5, int count6){
+    public void scorePoints(){
+        int ones = 0;
+        int twos = 0;
+        int threes = 0;
+        int fours = 0;
+        int fives = 0;
+        int sixes = 0;
+        int newScore = 0;
+
+        for(int x = 0; x < 3; x++){
+            for(int y = 0; y < 2; y++){
+                if(!imageButtons[y][x].isEnabled()){ //if the dice has been clicked on, score it
+                    if (diceNumber[y][x] == 1){ //if the dice value is one
+                        ones++;
+                        diceNumber[y][x] = 0;
+                    }if (diceNumber[y][x] == 2){ //if the dice value is two
+                        twos++;
+                        diceNumber[y][x] = 0;
+                    }if (diceNumber[y][x] == 3){ //if the dice value is three
+                        threes++;
+                        diceNumber[y][x] = 0;
+                    }if (diceNumber[y][x] == 4){ //if the dice value is four
+                        fours++;
+                        diceNumber[y][x] = 0;
+                    }if (diceNumber[y][x] == 5){ //if the dice value is five
+                        fives++;
+                        diceNumber[y][x] = 0;
+                    }if (diceNumber[y][x] == 6){ //if the dice value is six
+                        sixes++;
+                        diceNumber[y][x] = 0;
+                    }
+                }
+            }
+        }
+
         //number of 1's
-        if(count1 == 1){
+        if(ones == 1){
             newScore += 100;
-        }else if(count1 == 2){
+        }else if(ones == 2){
             newScore += 200;
-        }else if(count1 == 3){
+        }else if(ones == 3){
             newScore += 1000;
-        }else if(count1 >= 4){
-            newScore += 1000 + 1000 * (count1 - 3);
+        }else if(ones >= 4){
+            newScore += 1000 + 1000 * (ones - 3);
         }
 
         //number of 2's
-        if(count2 == 1){
+        if(twos == 1){
             newScore += 0;
-        }else if(count2 == 2){
+        }else if(twos == 2){
             newScore += 0;
-        }else if(count2 == 3){
+        }else if(twos == 3){
             newScore += 200;
-        }else if(count2 >= 4){
-            newScore += 200 + 200 * (count2 - 3);
+        }else if(twos >= 4){
+            newScore += 200 + 200 * (twos - 3);
         }
 
         //number of 3's'
-        if(count3 == 1){
+        if(threes == 1){
             newScore += 0;
-        }else if(count3 == 2){
+        }else if(threes == 2){
             newScore += 0;
-        }else if(count3 == 3){
+        }else if(threes == 3){
             newScore += 300;
-        }else if(count3 >= 4){
-            newScore += 300 + 300 * (count3 - 3);
+        }else if(threes >= 4){
+            newScore += 300 + 300 * (threes - 3);
         }
 
         //number of 4's
-        if(count4 == 1){
+        if(fours == 1){
             newScore += 0;
-        }else if(count4 == 2){
+        }else if(fours == 2){
             newScore += 0;
-        }else if(count4 == 3){
+        }else if(fours == 3){
             newScore += 400;
-        }else if(count4 >= 4){
-            newScore += 400 + 400 * (count4 - 3);
+        }else if(fours >= 4){
+            newScore += 400 + 400 * (fours - 3);
         }
 
         //number of 5's
-        if(count5 == 1){
+        if(fives == 1){
             newScore += 50;
-        }else if(count5 == 2){
+        }else if(fives == 2){
             newScore += 100;
-        }else if(count5 == 3){
+        }else if(fives == 3){
             newScore += 500;
-        }else if(count5 >= 4){
-            newScore += 500 + 500 * (count5 - 3);
+        }else if(fives >= 4){
+            newScore += 500 + 500 * (fives - 3);
         }
-        System.out.println("5 count " + count5);
-        System.out.println("five score: " + newScore);
+
+        System.out.println("new score: " + newScore);
+        System.out.println("current score: " + currentScore);
 
         //number of 6's
-        if(count6 == 1){
+        if(sixes == 1){
             newScore += 0;
-        }else if(count6 == 2){
+        }else if(sixes == 2){
             newScore += 0;
-        }else if(count6 == 3){
+        }else if(sixes == 3){
             newScore += 600;
-        }else if(count6 >= 4){
-            newScore += 600 + 600 * (count6 - 3);
+        }else if(sixes >= 4){
+            newScore += 600 + 600 * (sixes - 3);
         }
+
         totalScore += newScore;
+        currentScore += newScore;
+        System.out.println("total: " + totalScore);
     }
-    
+
+    public void checkPlay(){
+        int one = 0;
+        int two = 0;
+        int three = 0;
+        int four = 0;
+        int five = 0;
+        int six = 0;
+
+        for(int x = 0; x < 3; x++){
+            for(int y = 0; y < 2; y++){
+                if(imageButtons[y][x].isEnabled()){ //if the dice hasn't been clicked on
+                    if (diceNumber[y][x] == 1){ //if the dice value is one
+                        one++;
+                    }if (diceNumber[y][x] == 2){ //if the dice value is two
+                        two++;
+                    }if (diceNumber[y][x] == 3){ //if the dice value is three
+                        three++;
+                    }if (diceNumber[y][x] == 4){ //if the dice value is four
+                        four++;
+                    }if (diceNumber[y][x] == 5){ //if the dice value is five
+                        five++;
+                    }if (diceNumber[y][x] == 6){ //if the dice value is six
+                        six++;
+                    }
+                }
+            }
+        }
+        if (one < 1 && five < 1 && two < 3 && three < 3 && four < 3 && six < 3){
+            //send a message if they want to forfeit
+            Toast.makeText(this, "Looks like you can't play anything. You can forfeit your current points and start a new round by clicking 'stop'", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
     public void rollDice (){
         int diceNum;
         for(int x = 0; x < 3; x++) {
@@ -240,22 +309,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                              * I used this code to change the image of my dice buttons.
                              */
                             imageButtons[y][x].setImageResource(R.drawable.dice1);
+                            diceNumber[y][x] = 1;
                         } else if (diceNum == 2) {
                             imageButtons[y][x].setImageResource(R.drawable.dice2);
+                            diceNumber[y][x] = 2;
                         } else if (diceNum == 3) {
                             imageButtons[y][x].setImageResource(R.drawable.dice3);
+                            diceNumber[y][x] = 3;
                         } else if (diceNum == 4) {
                             imageButtons[y][x].setImageResource(R.drawable.dice4);
+                            diceNumber[y][x] = 4;
                         } else if (diceNum == 5) {
                             imageButtons[y][x].setImageResource(R.drawable.dice5);
+                            diceNumber[y][x] = 5;
                         } else if (diceNum == 6) {
                             imageButtons[y][x].setImageResource(R.drawable.dice6);
+                            diceNumber[y][x] = 6;
                         }
                     }
                 }
             }
         }
     }
-
-
 }
