@@ -126,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void resetDice(){
+        //enabled the roll button
+        roll.setEnabled(true);
         //enable all dice:
         for(int x = 0; x < 3; x++){
             for(int y = 0; y < 2; y++){
@@ -290,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (one < 1 && five < 1 && two < 3 && three < 3 && four < 3 && six < 3){
             //send a message if they want to forfeit
+            roll.setEnabled(false);
             Toast.makeText(this, "Looks like you can't play anything. You can forfeit your current points and start a new round by clicking 'stop'", Toast.LENGTH_LONG).show();
         }
 
