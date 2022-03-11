@@ -71,31 +71,61 @@
                 android:id="@+id/roll_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-medium"
                 android:text="@string/roll_command">
             </Button>
             <Button
                 android:id="@+id/score_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-medium"
                 android:text="@string/score_command">
             </Button>
             <Button
                 android:id="@+id/stop_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-medium"
                 android:text="@string/stop_command">
             </Button>
         </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+            <TextView
+                android:id="@+id/roundNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:fontFamily="sans-monospace-medium"
+                android:text="@string/round_text">
+            </TextView>
+            <TextView
+                android:id="@+id/currentScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:fontFamily="sans-monospace-medium"
+                android:text="@string/current_score">
+            </TextView>
+            <TextView
+                android:id="@+id/totalScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:fontFamily="sans-monospace-medium"
+                android:text="@string/total_score">
+            </TextView>
+
+        </TableRow>
+
     </TableLayout>
-    <TextView
-        android:id="@+id/totalScore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Total Score: "
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 
 
 
