@@ -2,15 +2,18 @@
  *This project creates a farkle game app that allows users to roll 6 dice and choose some
  * to increase their score.
  * Author: Paige Wiley
- * Date:
+ * Date: 3-11-2022
  */
 package com.example.farkleproject;
 
 import static android.graphics.Color.argb;
 import static android.graphics.Color.rgb;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.os.Bundle;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView currentScoreText;
     TextView totalScoreText;
     TextView roundText;
+    final Context context = this;
 
 
     @Override
@@ -66,34 +70,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         diceNumber[1][2] = 6;
 
 
-
-
-
         roll = (Button)this.findViewById(R.id.roll_button);
         roll.setOnClickListener(this);
         score = (Button)this.findViewById(R.id.score_button);
        score.setOnClickListener(this);
+       score.setEnabled(false);
         stop = (Button)this.findViewById(R.id.stop_button);
         stop.setOnClickListener(this);
     }
 
 
-
-
-
     public void onClick(View view){ //when a button is clicked
+
         int imgBtn_id = view.getId();
 
         //use this area to determine the scoring totals
-        if(imgBtn_id == 2131230934 ||
-                imgBtn_id == 2131230935 ||
-                imgBtn_id == 2131230936 ||
-                imgBtn_id == 2131231199 ||
-                imgBtn_id == 2131231200 ||
-                imgBtn_id == 2131231201) { // id's of dice image 1, 2, 3, 4, 5, 6
+        if(imgBtn_id == R.id.imageButton1 ||
+                imgBtn_id == R.id.imageButton2 ||
+                imgBtn_id == R.id.imageButton3 ||
+                imgBtn_id == R.id.imageButton4 ||
+                imgBtn_id == R.id.imageButton5 ||
+                imgBtn_id == R.id.imageButton6) { // id's of dice image 1, 2, 3, 4, 5, 6
 
             ImageButton imgBtn = (ImageButton) view;
-
 
             /*
              * I used code from Stack Overflow
@@ -103,16 +102,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             imgBtn.setColorFilter(argb(150, 255, 255, 255));
             imgBtn.setEnabled(false);
 
-
         }else { //if one of the bottom command buttons are pressed
             Button b = (Button) view;
             if (b.isEnabled()) {
                 if (b.getText().equals("Roll")) { //when the roll button is clicked
                     rollDice();
                     checkPlay();
+                    score.setEnabled(true);
+                    roll.setEnabled(false);
                 } else if (b.getText().equals("Score")) { //when the score button is clicked
                     //print total score to app
                     scorePoints();
+                    score.setEnabled(false);
+                    roll.setEnabled(true);
                     currentScoreText.setText("Current Score: " + currentScore);
                 } else if (b.getText().equals("Stop")) { //when the stop button is clicked
                     //print out your latest score
@@ -120,11 +122,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     roundNum++;
                     roundText.setText("Round " + roundNum);
                     resetDice();
+                    roll.setEnabled(true);
+                    score.setEnabled(false);
                 }
             }
         }
     }
 
+    //resets the game for the next round
     public void resetDice(){
         //enabled the roll button
         roll.setEnabled(true);
@@ -133,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(int y = 0; y < 2; y++){
                 //set color to nothing
                 imageButtons[y][x].setEnabled(true);
+                imageButtons[y][x].setColorFilter(argb(0,255,255,255));
             }
         }
         currentScore = 0;
@@ -244,9 +250,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             newScore += 500 + 500 * (fives - 3);
         }
 
-        System.out.println("new score: " + newScore);
-        System.out.println("current score: " + currentScore);
-
         //number of 6's
         if(sixes == 1){
             newScore += 0;
@@ -260,9 +263,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         totalScore += newScore;
         currentScore += newScore;
-        System.out.println("total: " + totalScore);
     }
 
+    //checks that you can score with your roll
     public void checkPlay(){
         int one = 0;
         int two = 0;
@@ -292,11 +295,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (one < 1 && five < 1 && two < 3 && three < 3 && four < 3 && six < 3){
             //send a message if they want to forfeit
-            roll.setEnabled(false);
-            Toast.makeText(this, "Looks like you can't play anything. You can forfeit your current points and start a new round by clicking 'stop'", Toast.LENGTH_LONG).show();
+
+            /*
+             * I used code from Mkyong.com.
+             * URL: https://mkyong.com/android/android-alert-dialog-example/
+             * I used this code to send an alert to the users if the dice they rolled can't score.
+             */
+            AlertDialog.Builder alertForForfeit = new AlertDialog.Builder(context);
+            alertForForfeit.setMessage("Looks like you can't make any more moves. Would you like to forfeit your points and start a new round?");
+            alertForForfeit.setCancelable(false);
+            alertForForfeit.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    //if yes is clicked, close current
+                    totalScore -= currentScore;
+                    score.setEnabled(false);
+                    roll.setEnabled(false);
+                    Toast.makeText(context, "To continue press 'STOP'", Toast.LENGTH_LONG).show();
+                }
+            });
+            /*alertForForfeit.setNegativeButton("No",new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    //if no is clicked, do nothing
+                    dialog.cancel();
+                }
+            });*/
+
+            //create alert dialog
+            AlertDialog alertDialog = alertForForfeit.create();
+
+            //show the alert
+            alertDialog.show();
         }
 
     }
+
 
     public void rollDice (){
         int diceNum;
